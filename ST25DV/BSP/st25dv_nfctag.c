@@ -87,8 +87,8 @@ NFCTAG_StatusTypeDef BSP_NFCTAG_Init(void)
 
     /* Check ST25DV driver ID */
     St25Dv_i2c_Drv.ReadID(&nfctag_id);
-
-    if ((nfctag_id == I_AM_ST25DV04) || (nfctag_id == I_AM_ST25DV16) || (nfctag_id == I_AM_ST25DV64)) {
+    // printk("nfctag_id: %d\n", nfctag_id);
+    if ((nfctag_id == I_AM_ST25DV04) || (nfctag_id == I_AM_ST25DV16) || (nfctag_id == I_AM_ST25DV64) || (nfctag_id == 80)) {
         NfctagInitialized = 1;
         Nfctag_Drv = &St25Dv_i2c_Drv;
         Nfctag_Drv->pData = &St25Dv_i2c_ExtDrv;
