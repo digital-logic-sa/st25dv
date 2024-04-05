@@ -20,6 +20,8 @@ zephyr_library_sources(
     ST25DV/libNDEF/lib_NDEF.c
     ST25DV/libNDEF/tagtype5_wrapper.c
     ST25DV/ST25DV/st25dv.c
+    ST25DV/ST25DV/st25dv.c
+    ST25DV/ST25DV/st25dv_bus_io.c
 )
 
 zephyr_library_link_libraries(LIBST25DV)
