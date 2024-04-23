@@ -29,6 +29,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "tagtype5_wrapper.h"
 #include "../BSP/st25dv_nfctag.h"
+#include "zephyr/logging/log.h"
+#include "zephyr/kernel.h"
+LOG_MODULE_REGISTER(tagtype5_wrapper);
 
 //void printDbg(char *str);
 //char tmp[40];
@@ -322,8 +325,10 @@ uint16_t NfcType5_TT5Init(void)
   // printk("\nNfcType5_TT5Init - update CCFile \n");
   status = NfcType5_WriteCCFile(accbuffer);
   if (status != NDEF_OK) {
+    LOG_ERR("Write CCFile failed");
     return status;
   }
+  k_sleep(K_MSEC(10));
 
   /* Update NDEF TLV for INITIALIZED state */
   /* Update T */
@@ -331,8 +336,10 @@ uint16_t NfcType5_TT5Init(void)
   cdata = NFCT5_NDEF_MSG_TLV;
   ret_value = BSP_NFCTAG_WriteData(&cdata, CCFileStruct.NDEF_offset, 1);
   if (ret_value != NFCTAG_OK) {
+    LOG_ERR("Write NDEF TLV failed");
     return NDEF_ERROR;
   }
+  k_sleep(K_MSEC(10));
 
   /* Update L */
   cdata = 0x00;
@@ -340,8 +347,10 @@ uint16_t NfcType5_TT5Init(void)
   ret_value = BSP_NFCTAG_WriteData(&cdata, (CCFileStruct.NDEF_offset + 1), 1);
   if (ret_value != NFCTAG_OK) {
     // printk("\nNfcType5_TT5Init - update L error \n");
+    LOG_ERR("Update L failed");
     return NDEF_ERROR;
   }
+  k_sleep(K_MSEC(10));
 
   // printk("\nNfcType5_TT5Init - success \n");
 

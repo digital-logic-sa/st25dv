@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <zephyr/logging/log.h>
-
 LOG_MODULE_REGISTER(st25dv_bus_io, LOG_LEVEL_WRN);
 
 #define DT_DRV_COMPAT st_st25dv
@@ -29,11 +28,15 @@ NFCTAG_StatusTypeDef ST25DV_IO_MemWrite(const uint8_t *const pData, const uint8_
         {.buf = (uint8_t *)pData, .len = Size, .flags = I2C_MSG_WRITE | I2C_MSG_STOP}
     };
     st25dv_i2c.addr = DevAddr;
-    // k_sleep(K_MSEC(50)); // Slow down the I2C communication
-    if (i2c_transfer_dt(&st25dv_i2c, msgs, 2) == 0) {
-        return NFCTAG_OK;
+    // k_sleep(K_MSEC(200)); // Slow down the I2C communication
+    uint8_t max_retry = 10;
+    while (max_retry--) {
+        if (i2c_transfer_dt(&st25dv_i2c, msgs, 2) == 0) {
+            return NFCTAG_OK;
+        }
+        LOG_ERR("I2C transfer failed");
+        k_sleep(K_MSEC(1));
     }
-    LOG_ERR("I2C transfer failed");
     return NFCTAG_ERROR;
 }
 
@@ -45,7 +48,7 @@ NFCTAG_StatusTypeDef ST25DV_IO_Write(const uint8_t *const pData, const uint8_t D
         .flags = I2C_MSG_WRITE | I2C_MSG_STOP
     };
     st25dv_i2c.addr = DevAddr;
-    // k_sleep(K_MSEC(50)); // Slow down the I2C communication
+    // k_sleep(K_MSEC(200)); // Slow down the I2C communication
     if (i2c_transfer_dt(&st25dv_i2c, &msg, 1) == 0) {
         return NFCTAG_OK;
     }
@@ -65,7 +68,7 @@ NFCTAG_StatusTypeDef ST25DV_IO_MemRead(uint8_t *const pData, const uint8_t DevAd
     st25dv_i2c.addr = DevAddr;
 
     int ret;
-    // k_sleep(K_MSEC(50)); // Slow down the I2C communication
+    // k_sleep(K_MSEC(200)); // Slow down the I2C communication
     ret = i2c_transfer_dt(&st25dv_i2c, msgs, 2);
     if (ret < 0) {
         LOG_ERR("I2C transfer failed: %d", ret);
@@ -83,7 +86,7 @@ NFCTAG_StatusTypeDef ST25DV_IO_Read(uint8_t *const pData, const uint8_t DevAddr,
         .flags = I2C_MSG_READ | I2C_MSG_STOP
     };
     st25dv_i2c.addr = DevAddr;
-    // k_sleep(K_MSEC(50)); // Slow down the I2C communication
+    // k_sleep(K_MSEC(200)); // Slow down the I2C communication
     if (i2c_transfer_dt(&st25dv_i2c, &msg, 1) == 0) {
         return NFCTAG_OK;
     }
@@ -105,11 +108,11 @@ NFCTAG_StatusTypeDef ST25DV_IO_IsDeviceReady(const uint8_t DevAddr, const uint32
     };
     st25dv_i2c.addr = DevAddr;
     for (uint32_t i = 0; i < Trials; i++) {
-        k_sleep(K_MSEC(50)); // Slow down the I2C communication
+        // k_sleep(K_MSEC(200)); // Slow down the I2C communication
         if (i2c_transfer_dt(&st25dv_i2c, &msg, 1) == 0) {
             return NFCTAG_OK; // Dispositif prêt
         }
-        k_sleep(K_MSEC(1));
+        // k_sleep(K_MSEC(1));
     }
     return NFCTAG_ERROR; // Dispositif non prêt après plusieurs tentatives
 }

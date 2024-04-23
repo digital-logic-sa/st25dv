@@ -31,6 +31,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "st25dv_nfctag.h"
 #include <stddef.h>
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(st25dv_nfctag);
 
 /** @addtogroup BSP
  * @{
@@ -230,6 +232,7 @@ NFCTAG_StatusTypeDef BSP_NFCTAG_ReadData(uint8_t *const pData, const uint16_t Ta
 NFCTAG_StatusTypeDef BSP_NFCTAG_WriteData(const uint8_t *const pData, const uint16_t TarAddr, const uint16_t Size)
 {
   if (Nfctag_Drv->WriteData == NULL) {
+    LOG_ERR("WriteData is NULL\n");
     return NFCTAG_ERROR;
   }
 
