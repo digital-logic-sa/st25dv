@@ -39,7 +39,7 @@ extern "C" {
 #include "lib_NDEF.h"
 
 /** @brief NDEF Text buffer length. */
-#define NDEF_TEXT_MAX_LENGTH 40
+#define NDEF_TEXT_MAX_LENGTH 100
 /** @brief NDEF Language code buffer length. */
 #define NDEF_TEXT_LANGUAGE_CODE_MAX_LENGTH 10
 
